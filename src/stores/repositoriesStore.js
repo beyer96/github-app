@@ -2,13 +2,13 @@ import { defineStore } from "pinia";
 
 export const useRepositoriesStore = defineStore({
     id: "repositories",
-    state: {
+    state: () => ({
         isLoading: false,
         hasError: false,
         user: "Inza",
         repositories: [],
         readme: {}
-    },
+    }),
     actions: {
         async getUserRepositories() {
             this.isLoading = true
