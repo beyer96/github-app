@@ -2,6 +2,7 @@
     <!-- Loading spinner -->
     <div v-if="repositoriesStore.isLoading" class="w-100 text-center my-3">
         <h2>Loading...</h2>
+        <LoadingSpinner />
     </div>
     <!-- Error displayer -->
     <div v-if="repositoriesStore.hasError">
@@ -48,6 +49,7 @@
 import dayjs from "dayjs"
 import { onMounted } from "vue"
 import { useRepositoriesStore } from "../stores/repositoriesStore"
+import LoadingSpinner from "./LoadingSpinner.vue"
 
 const repositoriesStore = useRepositoriesStore()
 
