@@ -12,7 +12,7 @@
             <span class="my-1">Stargazers: {{ repositoriesStore.selectedRepository.stargazers_count }} | Forks: {{ repositoriesStore.selectedRepository.forks }}</span>
             <!-- Topics, if any -->
             <div v-if="repositoriesStore.selectedRepository.topics.length > 0" class="mt-3 d-flex justify-content-center flex-wrap">
-                <span v-for="topic in repositoriesStore.selectedRepository.topics" class="px-3 m-1 border text-black rounded-pill bg-light">{{ topic }}</span>
+                <span v-for="topic in repositoriesStore.selectedRepository.topics" :key="topic" class="px-3 m-1 border text-black rounded-pill bg-light">{{ topic }}</span>
             </div>
         </div>
         <div class="container mt-5 border border-3 rounded-3 p-3 bg-light">
