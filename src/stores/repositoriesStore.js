@@ -32,7 +32,7 @@ export const useRepositoriesStore = defineStore({
                 const response = await fetch(`https://api.github.com/repos/${this.user}/${repositoryName}/readme`)
                 const responseJson = await response.json()
                 // storing just "content" property from response, which always comes base64 encoded
-                this.readme = responseJson.content.toString("base64")
+                this.readme = atob(responseJson.content)
             } catch (err) {
                 this.hasError = true
                 console.error(err)
