@@ -6,7 +6,7 @@
     </div>
     <!-- Error displayer -->
     <div v-if="repositoriesStore.hasError">
-        <h2>Error</h2>
+        <ErrorMessage />
     </div>
     <!-- Content loaded properly -->
     <section v-if="repositoriesStore.repositories.length > 0" class="w-100 text-center my-3">
@@ -50,6 +50,7 @@ import dayjs from "dayjs"
 import { onMounted } from "vue"
 import { useRepositoriesStore } from "../stores/repositoriesStore"
 import LoadingSpinner from "./LoadingSpinner.vue"
+import ErrorMessage from "./ErrorMessage.vue"
 
 const repositoriesStore = useRepositoriesStore()
 

@@ -5,6 +5,7 @@ export const useRepositoriesStore = defineStore({
     state: () => ({
         isLoading: false,
         hasError: false,
+        errorMessage: null,
         user: "Inza",
         repositories: [],
         selectedRepository: null,
@@ -17,11 +18,16 @@ export const useRepositoriesStore = defineStore({
             try {
                 const response = await fetch(`https://api.github.com/users/${this.user}/repos`)
                 const responseJson = await response.json()
-                // fetching only public repositories, sorted by date as in GitHub
-                this.repositories = responseJson.filter(repo => repo.private === false).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at))
+                if(responseJson.length > 0) {
+                    // fetching only public repositories, sorted by date as in GitHub
+                    this.repositories = responseJson.filter(repo => repo.private === false).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at))
+                } else {
+                    throw Error(`We could not find any repositories for user ${this.user}`)
+                }
+                
             } catch (err) {
                 this.hasError = true
-                console.error(err)
+                this.errorMessage = err.message
             } finally {
                 this.isLoading = false
             }
@@ -36,7 +42,7 @@ export const useRepositoriesStore = defineStore({
                 this.readme = atob(responseJson.content)
             } catch (err) {
                 this.hasError = true
-                console.error(err)
+                this.errorMessage = err.message
             } finally {
                 this.isLoading = false
             }
