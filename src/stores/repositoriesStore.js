@@ -7,7 +7,8 @@ export const useRepositoriesStore = defineStore({
         hasError: false,
         user: "Inza",
         repositories: [],
-        readme: {}
+        selectedRepository: null,
+        readme: null
     }),
     actions: {
         async getUserRepositories() {
