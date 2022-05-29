@@ -1,4 +1,14 @@
 import { defineStore } from "pinia";
+import axios from "axios";
+
+axios.interceptors.response.use(null, error => {
+    const expectedError = error.response && error.response.status >= 400 && error.response.status < 500
+    if(!expectedError) {
+        let err = {message: "An unexpected error has occured..."}
+        return Promise.reject(err)
+    }
+    return Promise.reject(error)
+})
 
 export const useRepositoriesStore = defineStore({
     id: "repositories",
@@ -20,19 +30,20 @@ export const useRepositoriesStore = defineStore({
             this.isLoading = true
             this.hasError = false
             try {
+                // ERROR HANDLING - empty input
                 if(this.user == "") throw Error("No user selected")
-                const response = await fetch(`https://api.github.com/users/${this.user}/repos`)
-                const responseJson = await response.json()
-                if(responseJson.length > 0) {
-                    // fetching only public repositories, sorted by date as in GitHub
-                    this.repositories = responseJson.filter(repo => repo.private === false).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at))
-                } else {
-                    throw Error(`We could not find any repositories for user ${this.user}`)
-                }
+                const response = await axios.get(`https://api.github.com/users/${this.user}/repos`)
+                // fetching only public repositories, sorted by date as in GitHub
+                this.repositories = response.data.filter(repo => repo.private === false).sort((a, b) => Date.parse(b.pushed_at) - Date.parse(a.pushed_at))
                 
             } catch (err) {
-                this.hasError = true
-                this.errorMessage = err.message
+                if(err.response?.status == 404) {
+                    this.hasError = true
+                    this.errorMessage = `We could not find any repositories for user ${this.user}`
+                } else {
+                    this.hasError = true
+                    this.errorMessage = err.message
+                }
             } finally {
                 this.isLoading = false
             }
@@ -41,14 +52,19 @@ export const useRepositoriesStore = defineStore({
             this.isLoading = true
             this.hasError = false
             try {
-                const response = await fetch(`https://api.github.com/repos/${this.user}/${repositoryName}/readme`)
-                const responseJson = await response.json()
-                if(!responseJson.content) throw Error("Readme file for this project doesn't exist")
+                const response = await axios.get(`https://api.github.com/repos/${this.user}/${repositoryName}/readme`)
+                if(!response.data.content) throw Error("Readme file for this project doesn't exist")
                 // storing just "content" property from response, which always comes base64 encoded
-                this.readme = atob(responseJson.content)
+                this.readme = atob(response.data.content)
             } catch (err) {
-                this.hasError = true
-                this.errorMessage = err.message
+                if(err.response?.status == 404) {
+                    this.hasError = true
+                    this.errorMessage = "This repository has no readme file"
+                } else {
+                    this.hasError = true
+                    this.errorMessage = err.message
+                }
+                
             } finally {
                 this.isLoading = false
             }

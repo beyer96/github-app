@@ -4,8 +4,7 @@
         <LoadingSpinner />
         <span class="fs-3 fw-bolder">Loading...</span>
     </div>
-    <!-- Error displayer -->
-    <div v-else-if="repositoriesStore.hasError">
+    <div v-else-if="!repositoriesStore.selectedRepository">
         <ErrorMessage :errorMessage="repositoriesStore.errorMessage"/>
     </div>
     <section v-else-if="repositoriesStore.selectedRepository" class="text-center text-break">
