@@ -1,12 +1,12 @@
 <template>
     <!-- Loading spinner -->
-    <div v-if="repositoriesStore.isLoading" class="w-100 text-center my-3">
-        <h2>Loading...</h2>
+    <div v-if="repositoriesStore.isLoading" class="text-center my-3 position-absolute top-50 start-50 translate-middle">
         <LoadingSpinner />
+        <span class="fs-3 fw-bolder">Loading...</span>
     </div>
     <!-- Error displayer -->
     <div v-if="repositoriesStore.hasError">
-        <ErrorMessage />
+        <ErrorMessage :errorMessage="repositoriesStore.errorMessage"/>
     </div>
     <!-- Content loaded properly -->
     <section v-if="repositoriesStore.repositories.length > 0" class="w-100 text-center my-3">
@@ -30,9 +30,6 @@
                             <br>
                             <h5 class="d-inline-block fs-6">Last edit: </h5>
                             <span class="ps-2">{{ dayjs(repo.pushed_at).format("D MMM YYYY") }}</span>
-                            <!-- <div class="topics w-100 text-start d-flex justify-content-start flex-wrap" v-if="repo.topics.length > 0">
-                                <span class="mx-2 my-1 p-1 rounded-3 bg-light" v-for="topic in repo.topics" :key="topic">{{ topic }}</span>
-                            </div> -->
                         </div>
                         <div class="links d-flex flex-column justify-content-start align-items-end">
                             <RouterLink :to="{ name: 'repository', params: {name: repo.name}}">View details</RouterLink>

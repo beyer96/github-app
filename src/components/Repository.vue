@@ -1,4 +1,9 @@
 <template>
+    <!-- Loading spinner -->
+    <div v-if="repositoriesStore.isLoading" class="text-center my-3 position-absolute top-50 start-50 translate-middle">
+        <LoadingSpinner />
+        <span class="fs-3 fw-bolder">Loading...</span>
+    </div>
     <section v-if="repositoriesStore.selectedRepository" class="text-center text-break">
         <nav class="m-3">
             <RouterLink :to="{ name: 'home' }" class="px-3 mx-1 border text-black rounded-pill bg-light">Back</RouterLink>
@@ -18,6 +23,7 @@
         <div class="container mt-5 border border-3 rounded-3 p-3 bg-light">
             <h3>ReadMe file</h3>
             <p class="text-start" v-if="repositoriesStore.readme !== null" v-html="marked(repositoriesStore.readme)"></p>
+            <ErrorMessage v-else-if="repositoriesStore.hasError" :errorMessage="repositoriesStore.errorMessage" />
         </div>
     </section>
 </template>
@@ -27,6 +33,8 @@ import { onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { marked } from "marked"
 import dayjs from "dayjs"
+import LoadingSpinner from "./LoadingSpinner.vue"
+import ErrorMessage from "./ErrorMessage.vue"
 import { useRepositoriesStore } from "../stores/repositoriesStore"
 
 const repositoriesStore = useRepositoriesStore()
