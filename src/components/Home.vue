@@ -5,11 +5,11 @@
         <span class="fs-3 fw-bolder">Loading...</span>
     </div>
     <!-- Error displayer -->
-    <div v-if="repositoriesStore.hasError">
+    <div v-else-if="repositoriesStore.hasError">
         <ErrorMessage :errorMessage="repositoriesStore.errorMessage"/>
     </div>
     <!-- Content loaded properly -->
-    <section v-if="repositoriesStore.repositories.length > 0" class="w-100 text-center my-3">
+    <section v-else class="w-100 text-center my-3">
         <h2>{{ repositoriesStore.user }}'s repositories</h2>
         <div class="container-fluid row g-2">
             <div v-for="repo in repositoriesStore.repositories" :key="repo.id" class="col-md-6 col-lg-4">
@@ -32,7 +32,7 @@
                             <span class="ps-2">{{ dayjs(repo.pushed_at).format("D MMM YYYY") }}</span>
                         </div>
                         <div class="links d-flex flex-column justify-content-start align-items-end">
-                            <RouterLink :to="{ name: 'repository', params: {name: repo.name}}">View details</RouterLink>
+                            <RouterLink :to="{ name: 'repository', params: {username: repositoriesStore.user, repo: repo.name}}">View details</RouterLink>
                             <a :href="repo.html_url" target="_blank">GitHub link</a>
                         </div>
                     </div>

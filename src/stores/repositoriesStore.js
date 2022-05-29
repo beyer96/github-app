@@ -12,10 +12,15 @@ export const useRepositoriesStore = defineStore({
         readme: null
     }),
     actions: {
+        setUser(newUser) {
+            this.user = newUser
+            this.getUserRepositories()
+        },
         async getUserRepositories() {
             this.isLoading = true
             this.hasError = false
             try {
+                if(this.user == "") throw Error("No user selected")
                 const response = await fetch(`https://api.github.com/users/${this.user}/repos`)
                 const responseJson = await response.json()
                 if(responseJson.length > 0) {
@@ -38,6 +43,7 @@ export const useRepositoriesStore = defineStore({
             try {
                 const response = await fetch(`https://api.github.com/repos/${this.user}/${repositoryName}/readme`)
                 const responseJson = await response.json()
+                if(!responseJson.content) throw Error("Readme file for this project doesn't exist")
                 // storing just "content" property from response, which always comes base64 encoded
                 this.readme = atob(responseJson.content)
             } catch (err) {

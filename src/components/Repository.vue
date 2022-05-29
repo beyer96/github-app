@@ -4,7 +4,11 @@
         <LoadingSpinner />
         <span class="fs-3 fw-bolder">Loading...</span>
     </div>
-    <section v-if="repositoriesStore.selectedRepository" class="text-center text-break">
+    <!-- Error displayer -->
+    <div v-else-if="repositoriesStore.hasError">
+        <ErrorMessage :errorMessage="repositoriesStore.errorMessage"/>
+    </div>
+    <section v-else-if="repositoriesStore.selectedRepository" class="text-center text-break">
         <nav class="m-3">
             <RouterLink :to="{ name: 'home' }" class="px-3 mx-1 border text-black rounded-pill bg-light">Back</RouterLink>
             <a :href="repositoriesStore.selectedRepository.html_url" target="_blank" class="px-3 mx-1 border text-black rounded-pill bg-light">GitHub link</a>
@@ -22,8 +26,8 @@
         </div>
         <div class="container mt-5 border border-3 rounded-3 p-3 bg-light">
             <h3>ReadMe file</h3>
-            <p class="text-start" v-if="repositoriesStore.readme !== null" v-html="marked(repositoriesStore.readme)"></p>
-            <ErrorMessage v-else-if="repositoriesStore.hasError" :errorMessage="repositoriesStore.errorMessage" />
+            <ErrorMessage v-if="repositoriesStore.hasError" :errorMessage="repositoriesStore.errorMessage" />
+            <p class="text-start" v-else-if="repositoriesStore.readme !== null" v-html="marked(repositoriesStore.readme)"></p>
         </div>
     </section>
 </template>
@@ -40,9 +44,13 @@ import { useRepositoriesStore } from "../stores/repositoriesStore"
 const repositoriesStore = useRepositoriesStore()
 const route = useRoute()
 
-onMounted(() => {
-    repositoriesStore.selectedRepository = repositoriesStore.repositories.find(repo => repo.name === route.params.name)
-    repositoriesStore.getReadmeForSelectedRepository(route.params.name)
+onMounted(async () => {
+    repositoriesStore.user = route.params.username
+    if(repositoriesStore.repositories.length == 0) {
+        await repositoriesStore.getUserRepositories()
+    }
+    repositoriesStore.selectedRepository = repositoriesStore.repositories.find(repo => repo.name === route.params.repo)
+    repositoriesStore.getReadmeForSelectedRepository(route.params.repo)
 })
 </script>
 
