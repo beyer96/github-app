@@ -3,6 +3,8 @@
         <h2>Something wrong happened :(</h2>
         <p>{{ this.errorMessage }}</p>
         <p>Please try to <a href="javascript:location.reload()">refresh the page</a></p>
+        <span style="d-block">or</span>
+        <p><a href="/">redirect to homepage</a></p>
     </div>
 </template>
 
